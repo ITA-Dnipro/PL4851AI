@@ -108,3 +108,38 @@ Frontend requests to `/api/auth/` must use `credentials: 'include'`, otherwise t
 
 - Use `localhost` for both the frontend and the API, not `127.0.0.1`: for the browser they are different sites, so the cookie isn't sent and refresh returns `401`.
 - Login, refresh and logout check the `Origin` header: requests from other sites get `403`, so a foreign page can't log the user in or out through a form. Allowed origins are the API's own (the browsable API) and `CORS_ALLOWED_ORIGINS`; requests without `Origin` (curl, Postman) are allowed.
+
+## Investors
+
+Public, read-only endpoints. No authentication is needed. Only verified investors (`is_verified=True`) are returned.
+
+`GET /api/investors/` — paginated list.
+
+- Query params: `page`, `page_size` (default 8, max 100), `search` (by name, case-insensitive substring), `type` (`private`, `fund` or `company`).
+- Response `200`: `count`, `next`, `previous` and `results`; each item has `investor_id`, `investor_name`, `investor_type`, `investment_min` (a string like `"50000.00"`, or `null`).
+- Errors: `400` unknown, empty or wrongly cased `type` (the message lists the allowed values), `404` page out of range.
+
+`GET /api/investors/{id}/` — public profile.
+
+```json
+{
+  "investor_id": 901,
+  "investor_name": "Green Capital",
+  "investor_type": "fund",
+  "investor_description": "We invest in craft food and eco packaging.",
+  "contact": { "phone": "+380501234567" },
+  "investment_min": "50000.00",
+  "is_verified": true
+}
+```
+
+- `contact.phone` is an empty string if the phone is not set.
+- Errors: `404` for an unknown id and for an unverified investor (the response is the same, so the existence is not revealed).
+- `investor_description` is returned as stored, without sanitization. Show it as plain text, not as HTML.
+- The user and the registration number (`edrpou_or_ipn`) are never exposed.
+
+Load sample investors (3 verified, 1 unverified):
+
+```bash
+python manage.py loaddata investors
+```

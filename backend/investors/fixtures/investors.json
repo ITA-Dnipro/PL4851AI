@@ -1,0 +1,130 @@
+[
+  {
+    "model": "users.user",
+    "pk": 901,
+    "fields": {
+      "password": "!",
+      "is_superuser": false,
+      "first_name": "Олена",
+      "last_name": "Зелена",
+      "email": "green-capital@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-01T10:00:00Z",
+      "role": "investor",
+      "created_at": "2026-10-01T10:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 902,
+    "fields": {
+      "password": "!",
+      "is_superuser": false,
+      "first_name": "Андрій",
+      "last_name": "Мельник",
+      "email": "kyiv-angels@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-01T10:05:00Z",
+      "role": "investor",
+      "created_at": "2026-10-01T10:05:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 903,
+    "fields": {
+      "password": "!",
+      "is_superuser": false,
+      "first_name": "Ігор",
+      "last_name": "Коваль",
+      "email": "craft-ventures@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-01T10:10:00Z",
+      "role": "investor",
+      "created_at": "2026-10-01T10:10:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 904,
+    "fields": {
+      "password": "!",
+      "is_superuser": false,
+      "first_name": "Марія",
+      "last_name": "Бондар",
+      "email": "pending-fund@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-01T10:15:00Z",
+      "role": "investor",
+      "created_at": "2026-10-01T10:15:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "investors.investorprofile",
+    "pk": 901,
+    "fields": {
+      "user": 901,
+      "investor_name": "Green Capital",
+      "edrpou_or_ipn": "90100001",
+      "investor_description": "We invest in craft food and eco packaging.",
+      "investor_phone": "+380501234567",
+      "is_verified": true,
+      "investor_type": "fund",
+      "investment_min": "50000.00"
+    }
+  },
+  {
+    "model": "investors.investorprofile",
+    "pk": 902,
+    "fields": {
+      "user": 902,
+      "investor_name": "Kyiv Angels",
+      "edrpou_or_ipn": null,
+      "investor_description": "Бізнес-ангел, що підтримує ранні стадії.",
+      "investor_phone": "",
+      "is_verified": true,
+      "investor_type": "private",
+      "investment_min": null
+    }
+  },
+  {
+    "model": "investors.investorprofile",
+    "pk": 903,
+    "fields": {
+      "user": 903,
+      "investor_name": "Craft Ventures",
+      "edrpou_or_ipn": "90100003",
+      "investor_description": "Компанія, що вкладає у виробництво та ремесла.",
+      "investor_phone": "+380671112233",
+      "is_verified": true,
+      "investor_type": "company",
+      "investment_min": "10000.00"
+    }
+  },
+  {
+    "model": "investors.investorprofile",
+    "pk": 904,
+    "fields": {
+      "user": 904,
+      "investor_name": "Pending Fund",
+      "edrpou_or_ipn": "90100004",
+      "investor_description": "Очікує верифікації, у публічному API не показується.",
+      "investor_phone": "+380931234567",
+      "is_verified": false,
+      "investor_type": "fund",
+      "investment_min": "25000.00"
+    }
+  }
+]
