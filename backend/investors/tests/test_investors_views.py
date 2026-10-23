@@ -129,6 +129,119 @@ class InvestorListViewTest(APITestCase):
                 )
 
 
+class InvestorListFilterTest(APITestCase):
+    def setUp(self):
+        self.url = reverse('investors:investor-list')
+        self.green = create_investor(
+            1, investor_name='Green Capital', investor_type='fund'
+        )
+        self.angels = create_investor(
+            2, investor_name='Kyiv Angels', investor_type='private'
+        )
+        self.craft = create_investor(
+            3, investor_name='Craft Ventures', investor_type='company'
+        )
+        self.green_corp = create_investor(
+            4, investor_name='Greenfield Corp', investor_type='company'
+        )
+        self.hidden = create_investor(
+            5, investor_name='Green Hidden', investor_type='fund', is_verified=False
+        )
+
+    def names(self, response):
+        return [item['investor_name'] for item in response.data['results']]
+
+    def test_search_by_name_is_case_insensitive(self):
+        """Verify search returns only investors whose name contains the text."""
+        response = self.client.get(self.url, {'search': 'gREEN'})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.names(response), ['Green Capital', 'Greenfield Corp'])
+
+    def test_search_does_not_reveal_unverified(self):
+        """Verify an unverified investor is not found by search."""
+        response = self.client.get(self.url, {'search': 'Hidden'})
+
+        self.assertEqual(response.data['count'], 0)
+
+    def test_search_without_matches(self):
+        """Verify a search without matches gives an empty page, not an error."""
+        response = self.client.get(self.url, {'search': 'zzz'})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 0)
+        self.assertEqual(response.data['results'], [])
+
+    def test_filter_by_type(self):
+        """Verify the type filter returns only investors of that type."""
+        response = self.client.get(self.url, {'type': 'company'})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.names(response), ['Craft Ventures', 'Greenfield Corp'])
+        for item in response.data['results']:
+            self.assertEqual(item['investor_type'], 'company')
+
+    def test_filter_by_each_valid_type(self):
+        """Verify every documented type value is accepted."""
+        for investor_type in ('private', 'fund', 'company'):
+            with self.subTest(investor_type=investor_type):
+                response = self.client.get(self.url, {'type': investor_type})
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_search_and_type_combine(self):
+        """Verify search and type narrow the result together."""
+        response = self.client.get(self.url, {'search': 'green', 'type': 'company'})
+
+        self.assertEqual(self.names(response), ['Greenfield Corp'])
+
+    def test_unknown_type_returns_400_with_allowed_values(self):
+        """Verify an unknown type is rejected and the valid values are listed."""
+        response = self.client.get(self.url, {'type': 'unknown'})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        message = str(response.data)
+        for investor_type in ('private', 'fund', 'company'):
+            self.assertIn(investor_type, message)
+
+    def test_empty_type_returns_400(self):
+        """Verify an empty type value is treated as unknown, not ignored."""
+        response = self.client.get(self.url, {'type': ''})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_type_is_case_sensitive(self):
+        """Verify only the exact lowercase codes are accepted."""
+        response = self.client.get(self.url, {'type': 'FUND'})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_invalid_page_returns_404(self):
+        """Verify a page beyond the last one gives 404."""
+        response = self.client.get(self.url, {'page': 99})
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_invalid_page_size_falls_back_to_default(self):
+        """Verify a non-numeric or non-positive page_size does not cause an error."""
+        for value in ('abc', '0', '-1'):
+            with self.subTest(page_size=value):
+                response = self.client.get(self.url, {'page_size': value})
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual(response.data['count'], 4)
+
+    def test_page_size_is_capped(self):
+        """Verify page_size larger than the maximum is limited to 100."""
+        for index in range(10, 115):
+            create_investor(index)
+
+        response = self.client.get(self.url, {'page_size': 1000})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 100)
+
+
 class InvestorDetailViewTest(APITestCase):
     def setUp(self):
         self.investor = create_investor(

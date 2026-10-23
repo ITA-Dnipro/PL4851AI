@@ -1,4 +1,5 @@
-from rest_framework import generics, permissions
+from rest_framework import filters, generics, permissions
+from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 
 from investors.models import InvestorProfile
@@ -26,10 +27,25 @@ class VerifiedInvestorQuerysetMixin:
 
 
 class InvestorProfileListView(VerifiedInvestorQuerysetMixin, generics.ListAPIView):
-    """API view to list verified investors with pagination."""
+    """API view to list verified investors with search, type filter and pagination."""
 
     serializer_class = InvestorListSerializer
     pagination_class = InvestorPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['investor_name']
+
+    def get_queryset(self):
+        """Optionally restricts the returned investors by type."""
+        queryset = super().get_queryset()
+        investor_type = self.request.query_params.get('type')
+        if investor_type is None:
+            return queryset
+
+        if investor_type not in InvestorProfile.InvestorType.values:
+            allowed = ', '.join(InvestorProfile.InvestorType.values)
+            raise ValidationError({'type': f'Unknown type. Allowed values: {allowed}.'})
+
+        return queryset.filter(investor_type=investor_type)
 
 
 class InvestorPublicProfileDetailView(
