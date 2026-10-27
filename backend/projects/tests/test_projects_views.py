@@ -20,7 +20,10 @@ def api_client():
 
 @pytest.fixture
 def test_data(db):
-    """Populates the test database with a user, startup, and 8 projects."""
+    """Populates the test database with a user, startup, and 8 projects.
+
+    The first 5 projects are public, the last 3 are private.
+    """
     user = User.objects.create_user(email='testowner@test.com', password='password123')
     startup = StartupProfile.objects.create(
         user=user,
@@ -31,17 +34,17 @@ def test_data(db):
     projects = []
     for i in range(8):
         if i < 5:
-            project_status = Project.ProjectStatus.ACTIVE
+            visibility = Project.Visibility.PUBLIC
         else:
-            project_status = Project.ProjectStatus.DRAFT
+            visibility = Project.Visibility.PRIVATE
         project = Project.objects.create(
             startup=startup,
-            project_title=f'Project {i}',
+            title=f'Project {i}',
             short_description=f'Short desc {i}',
-            project_description=f'Full description {i}',
-            investment_sum=10000.00,
-            project_stage='MVP',
-            status=project_status,
+            description=f'Full description {i}',
+            target_amount=10000.00,
+            status=Project.ProjectStatus.FUNDRAISING,
+            visibility=visibility,
         )
         projects.append(project)
 
@@ -75,14 +78,21 @@ def test_project_list_pagination_configurable(api_client, test_data):
 @pytest.mark.django_db
 def test_project_list_filtering_by_status(api_client, test_data):
     """Check optional filtering of projects by their status."""
-    startup_id = test_data['startup'].pk
-    url = reverse('projects:startup-projects-list', kwargs={'startup_id': startup_id})
-    response = api_client.get(url, {'status': 'active'})
+    startup = test_data['startup']
+    Project.objects.create(
+        startup=startup,
+        title='Early',
+        description='D',
+        target_amount=100,
+        status=Project.ProjectStatus.IDEA,
+    )
+    url = reverse('projects:startup-projects-list', kwargs={'startup_id': startup.pk})
+    response = api_client.get(url, {'status': 'fundraising'})
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data['count'] == 5
     for project in response.data['results']:
-        assert project['status'] == 'active'
+        assert project['status'] == 'fundraising'
 
 
 @pytest.mark.django_db
@@ -93,13 +103,22 @@ def test_project_list_keys_match_spec(api_client, test_data):
     response = api_client.get(url)
     first_project = response.data['results'][0]
     expected_keys = {
-        'project_id',
-        'project_title',
-        'status',
-        'logo',
+        'id',
+        'title',
+        'slug',
         'short_description',
+        'description',
+        'status',
+        'target_amount',
+        'raised_amount',
+        'currency',
+        'tags',
+        'visibility',
+        'logo',
+        'created_at',
+        'updated_at',
     }
-    assert expected_keys.issubset(first_project.keys())
+    assert set(first_project.keys()) == expected_keys
 
 
 @pytest.mark.django_db
@@ -112,12 +131,11 @@ def test_project_list_returns_real_logo_url(api_client, test_data, tmp_path):
         )
         project_with_logo = Project.objects.create(
             startup=startup,
-            project_title='Project with Logo',
+            title='Project with Logo',
             short_description='Short desc',
-            project_description='Full description',
-            investment_sum=5000.00,
-            project_stage='MVP',
-            status=Project.ProjectStatus.ACTIVE,
+            description='Full description',
+            target_amount=5000.00,
+            status=Project.ProjectStatus.FUNDRAISING,
             logo=fake_image,
         )
         url = reverse(
@@ -128,9 +146,7 @@ def test_project_list_returns_real_logo_url(api_client, test_data, tmp_path):
         assert response.status_code == status.HTTP_200_OK
 
         results = response.data['results']
-        project_data = next(
-            p for p in results if p['project_id'] == project_with_logo.pk
-        )
+        project_data = next(p for p in results if p['id'] == str(project_with_logo.pk))
 
         assert 'test_logo' in project_data['logo']
         assert 'placeholder.jpg' not in project_data['logo']

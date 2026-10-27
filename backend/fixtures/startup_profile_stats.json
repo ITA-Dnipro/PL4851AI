@@ -10,34 +10,44 @@
   },
   {
     "model": "projects.project",
-    "pk": 1,
+    "pk": "a61559bb-2c0a-57f9-a492-8b027c2fa667",
     "fields": {
       "startup": 11,
-      "project_title": "Leather Forge Online Shop",
+      "title": "Leather Forge Online Shop",
       "short_description": "Web platform for sales",
-      "project_description": "Full description of development",
-      "investment_sum": "10000.00",
+      "description": "Full description of development",
+      "target_amount": "10000.00",
       "raised_amount": "1500.00",
       "project_stage": "MVP",
-      "status": "active",
       "created_at": "2026-10-15T12:00:00Z",
-      "updated_at": "2026-10-15T12:00:00Z"
+      "updated_at": "2026-10-15T12:00:00Z",
+      "slug": "project-1",
+      "status": "fundraising",
+      "currency": "UAH",
+      "tags": [],
+      "visibility": "public",
+      "deleted_at": null
     }
   },
   {
     "model": "projects.project",
-    "pk": 2,
+    "pk": "dfaeec93-5799-5fb8-8140-6bccefe6218d",
     "fields": {
       "startup": 11,
-      "project_title": "Secret Draft Project",
+      "title": "Secret Draft Project",
       "short_description": "Hidden",
-      "project_description": "Hidden draft text",
-      "investment_sum": "5000.00",
+      "description": "Hidden draft text",
+      "target_amount": "5000.00",
       "raised_amount": "0.00",
       "project_stage": "Idea",
-      "status": "draft",
       "created_at": "2026-10-15T12:00:00Z",
-      "updated_at": "2026-10-15T12:00:00Z"
+      "updated_at": "2026-10-15T12:00:00Z",
+      "slug": "project-2",
+      "status": "idea",
+      "currency": "UAH",
+      "tags": [],
+      "visibility": "private",
+      "deleted_at": null
     }
   }
 ]
