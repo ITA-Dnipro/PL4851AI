@@ -22,9 +22,9 @@ Code style and pre-commit hooks are described in the [root README](../README.md#
 
 ## Database
 
-By default (empty `DB_NAME`) the project uses SQLite — no setup needed.
+The project needs PostgreSQL: `Project.tags` is a PostgreSQL array field. SQLite (used when `DB_NAME` is empty) is no longer supported: migrations and tests of the `projects` app don't work on it, so don't leave `DB_NAME` empty.
 
-To use PostgreSQL locally, create a user and a database (pick any names and password):
+With Docker the database is already there (`docker compose up db`; it listens on port `5433` on the host). To use PostgreSQL installed locally, create a user and a database (pick any names and password):
 
 ```bash
 sudo -u postgres psql -c "CREATE USER <db_user> WITH PASSWORD '<db_password>';"
@@ -142,4 +142,47 @@ Load sample investors (3 verified, 1 unverified):
 
 ```bash
 python manage.py loaddata investors
+```
+
+## Projects
+
+A project belongs to a startup. Its id is a UUID. `status` is one of `idea`, `mvp`, `fundraising`, `funded`, `closed` (default `idea`); `visibility` is `public`, `private` or `unlisted` (default `public`).
+
+| Method | URL | Who |
+|---|---|---|
+| `GET` | `/api/startups/{startup_id}/projects/` | anyone: public projects; the owner also sees their `private` and `unlisted` ones |
+| `POST` | `/api/startups/{startup_id}/projects/` | the owner of the startup |
+| `GET` | `/api/projects/{id}/` | anyone for public projects; the owner for the rest |
+| `PATCH`, `PUT` | `/api/projects/{id}/` | the owner |
+| `DELETE` | `/api/projects/{id}/` | the owner (soft delete, `204`) |
+| `GET` | `/api/projects/{id}/history/` | the owner: paginated change history, newest first |
+
+Create request (only `title`, `description` and `target_amount` are required):
+
+```json
+{
+  "title": "Handmade Chairs",
+  "short_description": "Oak chairs",
+  "description": "<p>full text</p>",
+  "target_amount": "50000",
+  "currency": "UAH",
+  "tags": ["wood", "furniture"],
+  "visibility": "public"
+}
+```
+
+Response `201` has a `Location` header and the project: `id`, `title`, `slug`, `short_description`, `description`, `status`, `target_amount`, `raised_amount`, `currency`, `tags`, `visibility`, `logo`, `created_at`, `updated_at`.
+
+- `slug` is made from the title when the project is created and never changes. `startup` and `slug` in a request are ignored, so a project can't be moved to another startup.
+- `currency` is 3 uppercase letters (default `UAH`), `tags` has up to 10 items of up to 30 characters, `target_amount` must be above 0, `raised_amount` can't be negative. `raised_amount` is set by the owner by hand.
+- Statuses can be changed freely: the allowed transitions are not checked yet.
+- `private` and `unlisted` projects exist only for their owner: anyone else gets `404`. For writes on a public project a non-owner gets `403`, anonymous users get `401`.
+- Deleted projects are hidden everywhere (`404`) but stay in the database. Admin (**Projects**) can change the visibility, delete and restore projects with actions.
+- Every create, update and delete (API and admin actions) is written to the history: `changes` is `{"field": {"before": ..., "after": ...}}`. Updates that change nothing are not recorded.
+- `projects_count` in `GET /api/startups/{id}/` counts only public, not deleted projects.
+
+Load sample projects (5 projects with different statuses, one private):
+
+```bash
+python manage.py loaddata projects
 ```
