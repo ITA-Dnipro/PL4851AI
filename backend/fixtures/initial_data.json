@@ -80,16 +80,22 @@
   },
   {
     "model": "projects.project",
-    "pk": 1,
+    "pk": "a61559bb-2c0a-57f9-a492-8b027c2fa667",
     "fields": {
       "startup": 1,
-      "project_title": "AgroDrone V2",
-      "project_description": "Розробка нової модели дрона з тепловізором.",
-      "investment_sum": "150000.00",
+      "title": "AgroDrone V2",
+      "description": "Розробка нової модели дрона з тепловізором.",
+      "target_amount": "150000.00",
       "project_stage": "MVP",
       "raised_amount": "25000.00",
       "created_at": "2026-10-02T12:10:00Z",
-      "updated_at": "2026-10-02T12:10:00Z"
+      "updated_at": "2026-10-02T12:10:00Z",
+      "slug": "project-1",
+      "status": "idea",
+      "currency": "UAH",
+      "tags": [],
+      "visibility": "public",
+      "deleted_at": null
     }
   },
   {
@@ -97,7 +103,7 @@
     "pk": 1,
     "fields": {
       "investor": 1,
-      "project": 1,
+      "project": "a61559bb-2c0a-57f9-a492-8b027c2fa667",
       "saved_at": "2026-10-02T12:15:00Z"
     }
   }

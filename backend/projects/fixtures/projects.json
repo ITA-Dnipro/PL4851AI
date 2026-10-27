@@ -1,0 +1,151 @@
+[
+  {
+    "model": "users.user",
+    "pk": 801,
+    "fields": {
+      "password": "!",
+      "is_superuser": false,
+      "first_name": "Олексій",
+      "last_name": "Гончар",
+      "email": "woodcraft@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-01T09:00:00Z",
+      "role": "startup",
+      "created_at": "2026-10-01T09:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "startups.startupprofile",
+    "pk": 801,
+    "fields": {
+      "user": 801,
+      "startup_name": "Wood Craft",
+      "slug": "wood-craft",
+      "startup_email": "info@woodcraft.example.com",
+      "edrpou_or_ipn": "80100001",
+      "startup_description": "Меблі та дрібні вироби з дерева.",
+      "short_description": "Меблі з дерева",
+      "website": "https://woodcraft.example.com",
+      "startup_phone": "380990000801",
+      "location": "lviv",
+      "industries": [],
+      "employees": 5,
+      "is_verified": true,
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "projects.project",
+    "pk": "00000000-0000-4000-8000-000000000801",
+    "fields": {
+      "startup": 801,
+      "title": "Дубові стільці",
+      "slug": "dubovi-stilci",
+      "short_description": "Ергономічні стільці з дуба",
+      "description": "Ідея лінійки стільців з масиву дуба.",
+      "status": "idea",
+      "target_amount": "20000.00",
+      "raised_amount": "0.00",
+      "currency": "UAH",
+      "tags": ["wood", "furniture"],
+      "visibility": "public",
+      "project_stage": "",
+      "logo": null,
+      "created_at": "2026-10-02T10:00:00Z",
+      "updated_at": "2026-10-02T10:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "projects.project",
+    "pk": "00000000-0000-4000-8000-000000000802",
+    "fields": {
+      "startup": 801,
+      "title": "Кавові столики",
+      "slug": "kavovi-stoliki",
+      "short_description": "Мінімалістичні столики",
+      "description": "Прототип столиків готовий, шукаємо перших клієнтів.",
+      "status": "mvp",
+      "target_amount": "35000.00",
+      "raised_amount": "5000.00",
+      "currency": "UAH",
+      "tags": ["wood"],
+      "visibility": "public",
+      "project_stage": "",
+      "logo": null,
+      "created_at": "2026-10-03T10:00:00Z",
+      "updated_at": "2026-10-03T10:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "projects.project",
+    "pk": "00000000-0000-4000-8000-000000000803",
+    "fields": {
+      "startup": 801,
+      "title": "Кухонні набори",
+      "slug": "kuhonni-nabori",
+      "short_description": "Дерев'яне кухонне приладдя",
+      "description": "Запуск серійного виробництва кухонних наборів.",
+      "status": "fundraising",
+      "target_amount": "50000.00",
+      "raised_amount": "12500.00",
+      "currency": "UAH",
+      "tags": ["wood", "kitchen"],
+      "visibility": "public",
+      "project_stage": "",
+      "logo": null,
+      "created_at": "2026-10-04T10:00:00Z",
+      "updated_at": "2026-10-04T10:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "projects.project",
+    "pk": "00000000-0000-4000-8000-000000000804",
+    "fields": {
+      "startup": 801,
+      "title": "Підставки для фруктів",
+      "slug": "pidstavki-dlya-fruktiv",
+      "short_description": "Підставки для фруктів і випічки",
+      "description": "Збір завершено, виробництво розпочато.",
+      "status": "funded",
+      "target_amount": "25000.00",
+      "raised_amount": "25000.00",
+      "currency": "UAH",
+      "tags": ["wood"],
+      "visibility": "public",
+      "project_stage": "",
+      "logo": null,
+      "created_at": "2026-10-05T10:00:00Z",
+      "updated_at": "2026-10-05T10:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "projects.project",
+    "pk": "00000000-0000-4000-8000-000000000805",
+    "fields": {
+      "startup": 801,
+      "title": "Меблі для офісу",
+      "slug": "mebli-dlya-ofisu",
+      "short_description": "Закритий проєкт",
+      "description": "Проєкт закрито, у списках не показується.",
+      "status": "closed",
+      "target_amount": "80000.00",
+      "raised_amount": "1000.00",
+      "currency": "USD",
+      "tags": [],
+      "visibility": "private",
+      "project_stage": "",
+      "logo": null,
+      "created_at": "2026-10-06T10:00:00Z",
+      "updated_at": "2026-10-06T10:00:00Z",
+      "deleted_at": null
+    }
+  }
+]

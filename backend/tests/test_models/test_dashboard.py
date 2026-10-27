@@ -31,10 +31,9 @@ class SavedProjectModelTest(TestCase):
         )
         self.project = Project.objects.create(
             startup=self.startup,
-            project_title='P1',
-            project_description='D',
-            investment_sum=1000,
-            project_stage='Idea',
+            title='P1',
+            description='D',
+            target_amount=1000,
         )
         self.saved_project = SavedProject.objects.create(
             investor=self.investor, project=self.project

@@ -2,6 +2,7 @@ from django.db.models import Count, Q
 from rest_framework import filters, generics, permissions
 from rest_framework.pagination import PageNumberPagination
 
+from projects.models import Project
 from startups.models import StartupProfile
 from startups.serializers import (
     StartupProfileSerializer,
@@ -56,7 +57,12 @@ class StartupPublicProfileDetailView(generics.RetrieveAPIView):
             .annotate(
                 _followers_count=Count('followers', distinct=True),
                 _projects_count=Count(
-                    'projects', filter=~Q(projects__status='draft'), distinct=True
+                    'projects',
+                    filter=Q(
+                        projects__visibility=Project.Visibility.PUBLIC,
+                        projects__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
                 ),
             )
             .prefetch_related('industries')

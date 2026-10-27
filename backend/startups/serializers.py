@@ -133,4 +133,4 @@ class StartupPublicProfileSerializer(serializers.ModelSerializer):
         if hasattr(obj, '_projects_count'):
             return obj._projects_count
 
-        return obj.projects.exclude(status='draft').count()
+        return obj.projects.public().count()
